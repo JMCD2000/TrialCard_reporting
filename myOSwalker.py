@@ -14,14 +14,17 @@ for root, dirs, files in os.walk(".", topdown=False):
         
         # Open the file for processing
         file = open(os.path.join(root, name),'r', 1)
-        print('\ncurrent file handle: ' + file.name)
+        #print('\ncurrent file handle: ' + file.name)
         cFile = name
-        print('current file name: ' + cFile)
+        #print('current file name: ' + cFile)
 
         # get file name type
+		# getMyFileNameType returns two items
+		# test File is Bool and confirms that a filename format is defined
+		# file name type is the matched format to extract the date format
         testF, fnt = getMyFileNameType.myFNType(cFile)
-        print('current file name type: ' + fnt)
-        print('current file test: ' + str(testF))
+        #print('current file name type: ' + fnt)
+        #print('current file test: ' + str(testF))
 
         # Assign the slicing integers
         if testF == True:
@@ -156,7 +159,7 @@ for root, dirs, files in os.walk(".", topdown=False):
             myDD = cFile[ss2:es2]
             myYYYY = cFile[ss3:es3]
             reportDate = myMM + '/' + myDD + '/' + myYYYY
-            print('reportDate = ' + myMM + '/' + myDD + '/' + myYYYY)
+            #print('reportDate = ' + myMM + '/' + myDD + '/' + myYYYY)
             hNumCk = cFile[ss4:es4]                
             
             if fileReport == 'Bean_Data':
