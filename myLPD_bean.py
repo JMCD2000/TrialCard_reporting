@@ -264,6 +264,8 @@ if runTID == 'Y':
 else:
     # Presumed no, pass
     pass
+# print(trial_ID)
+print(curReportTrial_ID)
 
 # Get BT Date
 runBT = input('\nCount closure from BT Trial?\n'
@@ -326,23 +328,42 @@ for row in range(2, sheet.max_row + 1):
     if ((sheet['A' + str(row)].value != 'Trial Card No') or
        (sheet['A' + str(row)].value != 'Trial Card #') or
        (sheet['A' + str(row)].value != 'FOR OFFICIAL USE ONLY') or
-       (sheet['A' + str(row)].value != '')):
+       (sheet['A' + str(row)].value != '')
+       (sheet['A' + str(row)].value is not None)):
         # Check for empty TC Status values
-        if sheet['H' + str(row)].value != '':
+        if ((sheet['H' + str(row)].value != '') or
+        (sheet['H' + str(row)].value is not None)):
+            
             # Check if Event is in current report range
-            if sheet['M' + str(row)].value in curReportEvents:
-                # Process row
-                rowCount(row, events, userBT, userAT)
+            if sheet['M' + str(row)].value is not None:
+                for e in curReportEvents:
+                    if  e in sheet['M' + str(row)].value:
+                        # Process row
+                        rowCount(row, events, userBT, userAT)
+                        # Stop e iteration of curReportEvents, don't multi count single row
+                        break
+                    else:
+                        # Current e iteration in the current report events list is not in the current row 
+                        continue
             else:
-                # Current row is not in the current report events list
+                # cell is empty
                 pass
-            if sheet['L' + str(row)].value in curReportTrial_ID:
-                # Process row
-                rowCount(row, trial_ID, userBT, userAT)
+            
+            # Check if Event ID is in current report range
+            if sheet['L' + str(row)].value is not None:
+                for t in curReportTrial_ID:
+                    if  t in sheet['L' + str(row)].value:
+                        # Process row
+                        rowCount(row, trial_ID, userBT, userAT)
+                        # Stop t iteration of curReportTrial_ID, don't multi count single row
+                        break
+                    else:
+                        # Current t iteration in the current report trial ID list is not in the current row 
+                        continue
             else:
-                # Current row is not in the current report events list
+                # cell is empty
                 pass
-
+    
     elif ((sheet['A' + str(row)].value == 'Trial Card No') or
           (sheet['A' + str(row)].value == 'Trial Card #')):
         print('Header row found, pass.')
