@@ -1,4 +1,5 @@
 #! python3
+"""Return  file type and name structure."""
 # File Name: getMyFileType.py
 # Date of last edit: 3/28/2017
 # This program module is checking for naming format type. It will
@@ -35,13 +36,13 @@ def myFNType(pFile):
     # This is for the beans that are un-ordered
         # VBA: myfileNameVar3 = "LPD" & hullNum & "Bean(DATA)(FCT)*"
     # fnp3
-    myFNRegex3 = re.compile(r'LPD\d{2}Bean(DATA)(FCT)(.*)')  # LPD17Bean(DATA)(FCT)01.15.2008.xlsx
+    myFNRegex3 = re.compile(r'LPD\d\dBean(DATA)(FCT)(.*)')  # LPD17Bean(DATA)(FCT)01.15.2008.xlsx
         # VBA: myfileNameVar4 = "LPD" & hullNum & "Bean(DATA)(INSURV)*"
     # fnp4
-    myFNRegex4 = re.compile(r'LPD\d{2}Bean(DATA)(INSURV)(.*)')  # LPD17Bean(DATA)(INSURV)01.15.2008.xlsx
+    myFNRegex4 = re.compile(r'LPD\d\dBean(DATA)(INSURV)(.*)')  # LPD17Bean(DATA)(INSURV)01.15.2008.xlsx
         # VBA: myfileNameVar5 = "LPD" & hullNum & "Bean(DATA)*" 'Must be last for this name series
     # fnp5
-    myFNRegex5 = re.compile(r'LPD\d{2}BeanBean(DATA)(.*)')  # LPD17Bean(DATA)01.15.2008.xlsx
+    myFNRegex5 = re.compile(r'LPD\d\dBean(DATA)(.*)')  # LPD17Bean(DATA)01.15.2008.xlsx
 
     # This is for the TSM export file
         # VBA: myfileNameVar6 = "????????_? LPD nu *"
@@ -56,37 +57,43 @@ def myFNType(pFile):
         # unsupported by VBA
     # fnp9
     myFNRegex9 = re.compile(r'\d{8}_\d LPD nu INSURV(.*)')  # 20161114_1 LPD nu INSURV bean bu.xls
+        # unsupported by VBA
+    # fnp10
+    myFNRegex10 = re.compile(r'\d{8}_LPD_\d\d_Bean_B(.*)')  # 20161114_LPD_17_Bean_Burn.xls
 
     # Look for a pattern match
     # test = False # as default
     # fnt = None # as default
-    if (myFNRegex1.search(newfile) == None) == False:
+    if (myFNRegex1.search(newfile) is None) is False:
         test = True
         fnt = 'fnp1'
-    elif (myFNRegex2.search(newfile) == None) == False:
+    elif (myFNRegex2.search(newfile) is None) is False:
         test = True
         fnt = 'fnp2'
-    elif (myFNRegex3.search(newfile) == None) == False:
+    elif (myFNRegex3.search(newfile) is None) is False:
         test = True
         fnt = 'fnp3'
-    elif (myFNRegex4.search(newfile) == None) == False:
+    elif (myFNRegex4.search(newfile) is None) is False:
         test = True
         fnt = 'fnp4'
-    elif (myFNRegex5.search(newfile) == None) == False:
+    elif (myFNRegex5.search(newfile) is None) is False:
         test = True
         fnt = 'fnp5'
-    elif (myFNRegex6.search(newfile) == None) == False:
+    elif (myFNRegex6.search(newfile) is None) is False:
         test = True
         fnt = 'fnp6'
-    elif (myFNRegex7.search(newfile) == None) == False:
+    elif (myFNRegex7.search(newfile) is None) is False:
         test = True
         fnt = 'fnp7'
-    elif (myFNRegex8.search(newfile) == None) == False:
+    elif (myFNRegex8.search(newfile) is None) is False:
         test = True
         fnt = 'fnp8'
-    elif (myFNRegex9.search(newfile) == None) == False:
+    elif (myFNRegex9.search(newfile) is None) is False:
         test = True
         fnt = 'fnp9'
+    elif (myFNRegex10.search(newfile) is None) is False:
+        test = True
+        fnt = 'fnp10'
     else:
         print('File name: ' + newfile + ' \nDid not match mytype Regex.')
         test = False
