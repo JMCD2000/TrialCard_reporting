@@ -5,7 +5,7 @@ This program takes an export Excel file and
 tabulates TC counts Open and Closed, by screening and priority,
 and by date closed.
 File type must be .xlsx, older .xls are not supported by openpyxl.
-Date of last change 7/12/2018
+Date of last change 8/10/2017
 Jonathan McDonald
 Args:
 Returns:
@@ -13,7 +13,7 @@ Raises:
 """
 # Row count function
 def rowCount(row, bean):
-    # Reset selectors boolean values
+    # Reset selectors bools
     myPri_star = False
     myPri_1s = False
     myPri_1 = False
@@ -62,7 +62,7 @@ def rowCount(row, bean):
         elif safe != 'S':
             myPri_1 = True
         else:
-            # Un-captured value in field
+            # Uncaptured value in field
             pass
     elif int(pri) == 2:
         if safe == 'S':
@@ -70,7 +70,7 @@ def rowCount(row, bean):
         elif safe != 'S':
             myPri_2 = True
         else:
-            # Un-captured value in field
+            # Uncaptured value in field
             pass
     elif int(pri) == 3:
         if safe == 'S':
@@ -78,14 +78,14 @@ def rowCount(row, bean):
         elif safe != 'S':
             myPri_other = True
         else:
-            # Un-captured value in field
+            # Uncaptured value in field
             pass
     else:
-        # Un-captured value in field
+        # Uncaptured value in field
         myPri_other = True
         print('Row read error Priority in not Valid. Row: ' + str(row) + ' TC Number: ' + dsp)
 
-    # Make sure the key(s) for these dictionaries exist. The .setdefault() checks if the key exists, if not it creates with default passed value otherwise it will do nothing.
+    # Makesure the key(s) for these dictionaries exist. The .setdefault() checks if the key exsists, if not it creates with default passed value otherwise it will do nothing.
     # By bean type, status and priority count
     tc_Status.setdefault(bean, {})
     tc_Status[bean].setdefault(stat, {'Pri STARRED': 0, 'Pri 1S': 0, 'Pri 1': 0, 'Pri 2S': 0,   'Pri 2': 0, 'Pri 3S': 0, 'Pri OTHER': 0, 'Total': 0})
@@ -103,7 +103,7 @@ def rowCount(row, bean):
     else:
         # By bean type, date closed and date closed count
         tc_DateClosed.setdefault(bean, {})
-        # Check if Date Closed is already in the dictionary
+        # Check if Date Closed is allready in the dictionary
         tc_DateClosed[bean].setdefault(dt_close, 0)
         # Increment the date closed count plus 1
         tc_DateClosed[bean][dt_close] += 1
