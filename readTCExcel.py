@@ -1,9 +1,10 @@
 #! python3
 # readTCExcel.py - Tabulates TC counts Open and Closed, By screening and priority
-# date of last change 3/13/2017
+# date of last change 7/12/2018
 
 #import and include
 import openpyxl, pprint, datetime
+import test_col_getter
 
 # Let me know I have started
 # open downloaded TSM hull export for today
@@ -40,7 +41,7 @@ except:
     mySheetName = input('What is the name of the sheet? ') #default is 'TSM EXPORT'
     sheet = wb.get_sheet_by_name(mySheetName)
     
-# inilize the empty dictionarys
+# inilize the empty dictionaries
 tc_Status_INSURV = {} # tc_Status{[stat]: {'Pri STARRED': 0, 'Pri 1S': 0, 'Pri 1': 0, 'Pri 2S': 0,   'Pri 2': 0, 'Pri 3S': 0, 'Pri OTHER': 0, 'Total': 0}}
 tc_Stat_Scrn_INSURV = {} # tc_Stat_Scrn{[stat]: {[scrn]: {[scrngs]: {'Pri STARRED': 0, 'Pri 1S': 0, 'Pri 1': 0, 'Pri 2S': 0,   'Pri 2': 0, 'Pri 3S': 0, 'Pri OTHER': 0, 'Total': 0}}}}
 tc_Status_All = {} # tc_Status{[stat]: {'Pri STARRED': 0, 'Pri 1S': 0, 'Pri 1': 0, 'Pri 2S': 0,   'Pri 2': 0, 'Pri 3S': 0, 'Pri OTHER': 0, 'Total': 0}}
@@ -49,9 +50,21 @@ tc_Stat_Scrn_All = {} # tc_Stat_Scrn{[stat]: {[scrn]: {[scrngs]: {'Pri STARRED':
 #TODO: Fill in TC dicts with TC Data.
 # Let me know I am reading and looping through file
 print('Reading rows...')
+#TODO: below is under development
+"""
+for row in range(1,2,1):
+	for row_col in range(1,sheet.max_col + 1,1):
+		col_head = sheet[str(row_col) + str(row)].value
+		column_variable = getColumnDict(col_head)
+		if column_variable != 'not found':
+			column_variable + str(row_col)
+			
+"""
 for row in range(2,sheet.max_row + 1):
 
     # Each row in the spreadsheet has data for one Trial Card
+	#TODO: build a module to find possible values and assign to a column variable
+	# test_col_getter.py
     dsp = sheet['A' + str(row)].value
     star = sheet['B' + str(row)].value
     pri = sheet['C' + str(row)].value
