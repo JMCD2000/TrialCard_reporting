@@ -1,7 +1,7 @@
 #! python3
 """Return  file type and name structure."""
 # File Name: getMyFileType.py
-# Date of last edit: 3/28/2017
+# Date of last edit: 7/12/2018
 # This program module is checking for naming format type. It will
 # return True if matches a pattern and the pattern number. It will
 # return False if no match and fnp0
@@ -19,10 +19,10 @@ def myFNType(pFile):
 
     if testF == (r'.\\'):
         newfile = pFile[2:]
-        print('Had to trim file name: ' + pFile + '\nTo new name: ' + newfile)
+        #print('Had to trim file name: ' + pFile + '\nTo new name: ' + newfile)
     else:
         newfile = pFile
-        print('No name modifications: ' + newfile)
+        #print('No name modifications: ' + newfile)
 
     # Build regular expressions
     # This is where the Beans have been ordered with a prefixing parenthesis
@@ -95,7 +95,7 @@ def myFNType(pFile):
         test = True
         fnt = 'fnp10'
     else:
-        print('File name: ' + newfile + ' \nDid not match mytype Regex.')
+        #print('File name: ' + newfile + ' \nDid not match mytype Regex.')
         test = False
         fnt = 'fnp0'
 
