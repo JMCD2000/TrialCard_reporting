@@ -3,7 +3,7 @@
 """
 This program takes an export Excel file and
 tabulates TC counts Open and Closed, by screening and priority,
-and by date closed.
+and by date closed. This builds the trial card bean count dictionary.
 File type must be .xlsx, older .xls are not supported by openpyxl.
 Date of last change:
 Jonathan McDonald
@@ -57,6 +57,7 @@ def parseTCnum(tc_num=None):
     # six numbers (\d){6}
     reTCnum = re.compile(r'(\w){2,4}(\d){4}(\w){2,4}(\d)?-(\w){2}(\d){6}')
     moTCnum = reTCnum.search(tc_num)  # Passed in trial card number
+
     if moTCnum is None:
         # No Matched Object Trial Card number passed in
         return None  # Exit with no data.
@@ -76,6 +77,27 @@ def parseTCnum(tc_num=None):
 
 # Row count function
 def rowCount(row, bean, dt_BT=None, dt_AT=None):
+    """
+    This function takes an Excel file and
+    tabulates TC counts Open and Closed, by Screening and Priority,
+    by date closed, and by Department and Priority.
+    File type must be .xlsx, older .xls are not supported by openpyxl.
+    Date of last change:
+    Jonathan McDonald
+    Args:
+        row; intiger
+        bean; string list of Event or Trial ID
+        dt_BT=None; if a value present populate dict
+        dt_AT=None; if a value present populate dict
+    Future Features: togle the dicts
+        runDict_Status = True, False, None  # By bean type, status and priority count
+        runDict_Stat_Scrn = True, False, None  # By bean type, status, screen and screening count
+        runDict_DateClosed = True, False, None  # By bean type, date closed and date closed count
+        runDict_Depart = True, False, None  # By bean type, department and priority count
+    Returns:
+    Raises: none
+
+    """
     # Reset selectors booleans
     myPri_star = False
     myPri_1s = False
@@ -87,7 +109,7 @@ def rowCount(row, bean, dt_BT=None, dt_AT=None):
 
     # Each row in the spreadsheet has data for one Trial Card
     dsp = sheet['A' + str(row)].value  # 'Trial Card #'
-    dept = parseTCnum(dsp)  # 'Department from the Trial Card #'
+    dept = parseTCnum(dsp)  # Parse the Department from the Trial Card number
     star = sheet['B' + str(row)].value  # 'Star'
     pri = sheet['C' + str(row)].value  # 'Pri'
     safe = sheet['D' + str(row)].value  # 'Saf'
@@ -157,36 +179,6 @@ def rowCount(row, bean, dt_BT=None, dt_AT=None):
         # No Starred Cards in row, catch all
         pass
 
-## Commented out to stop double counting Stared cards
-##    if int(pri) == 1:
-##        if safe == 'S':
-##            myPri_1s = True
-##        elif safe != 'S':
-##            myPri_1 = True
-##        else:
-##            # Un-captured value in field
-##            pass
-##    elif int(pri) == 2:
-##        if safe == 'S':
-##            myPri_2s = True
-##        elif safe != 'S':
-##            myPri_2 = True
-##        else:
-##            # Un-captured value in field
-##            pass
-##    elif int(pri) == 3:
-##        if safe == 'S':
-##            myPri_3s = True
-##        elif safe != 'S':
-##            myPri_other = True
-##        else:
-##            # Un-captured value in field
-##            pass
-##    else:
-##        # Un-captured value in field
-##        myPri_other = True
-##        print('Row read error Priority in not Valid. Row: ' + str(row) + ' TC Number: ' + dsp)
-
     # Make sure the key(s) for these dictionaries exist.
     # The .setdefault() checks if the key exists, if not it creates
     # with default passed value otherwise it will do nothing.
@@ -237,34 +229,73 @@ def rowCount(row, bean, dt_BT=None, dt_AT=None):
             # AT date not given
             pass
 
-    # Update the Status and Screening dictionary's counts
+    # Update the Status by Priority dictionary's counts
     tc_Status[myBean][stat]['Total'] += 1
-    tc_Stat_Scrn[myBean][stat][scrn][scrngs]['Total'] += 1
     # Update the Priority counts
     if myPri_star is True:
         tc_Status[myBean][stat]['Pri STARRED'] += 1
-        tc_Stat_Scrn[myBean][stat][scrn][scrngs]['Pri STARRED'] += 1
     elif myPri_1s is True:
         tc_Status[myBean][stat]['Pri 1S'] += 1
-        tc_Stat_Scrn[myBean][stat][scrn][scrngs]['Pri 1S'] += 1
     elif myPri_1 is True:
         tc_Status[myBean][stat]['Pri 1'] += 1
-        tc_Stat_Scrn[myBean][stat][scrn][scrngs]['Pri 1'] += 1
     elif myPri_2s is True:
         tc_Status[myBean][stat]['Pri 2S'] += 1
-        tc_Stat_Scrn[myBean][stat][scrn][scrngs]['Pri 2S'] += 1
     elif myPri_2 is True:
         tc_Status[myBean][stat]['Pri 2'] += 1
-        tc_Stat_Scrn[myBean][stat][scrn][scrngs]['Pri 2'] += 1
     elif myPri_3s is True:
         tc_Status[myBean][stat]['Pri 3S'] += 1
-        tc_Stat_Scrn[myBean][stat][scrn][scrngs]['Pri 3S'] += 1
     elif myPri_other is True:
         tc_Status[myBean][stat]['Pri OTHER'] += 1
+    else:
+        print('Row read error with Status by Priority. '
+                    'Row: ' + str(row) + ' TC Number: ' + dsp)
+        # tc_Status[myBean][stat]['Total'] -= 1
+        pass
+
+    # Update the Screening by Status and Priority dictionary's counts
+    tc_Stat_Scrn[myBean][stat][scrn][scrngs]['Total'] += 1
+    # Update the Priority counts
+    if myPri_star is True:
+        tc_Stat_Scrn[myBean][stat][scrn][scrngs]['Pri STARRED'] += 1
+    elif myPri_1s is True:
+        tc_Stat_Scrn[myBean][stat][scrn][scrngs]['Pri 1S'] += 1
+    elif myPri_1 is True:
+        tc_Stat_Scrn[myBean][stat][scrn][scrngs]['Pri 1'] += 1
+    elif myPri_2s is True:
+        tc_Stat_Scrn[myBean][stat][scrn][scrngs]['Pri 2S'] += 1
+    elif myPri_2 is True:
+        tc_Stat_Scrn[myBean][stat][scrn][scrngs]['Pri 2'] += 1
+    elif myPri_3s is True:
+        tc_Stat_Scrn[myBean][stat][scrn][scrngs]['Pri 3S'] += 1
+    elif myPri_other is True:
         tc_Stat_Scrn[myBean][stat][scrn][scrngs]['Pri OTHER'] += 1
     else:
-        print('Row read error with Status of Open, Priority in not Valid. '
+        print('Row read error with Screening by Status and Priority. '
                     'Row: ' + str(row) + ' TC Number: ' + dsp)
+        # tc_Stat_Scrn[myBean][stat][scrn][scrngs]['Total'] -= 1
+        pass
+
+    # Update the Department by Priority counts
+    tc_Depart[myBean][dept]['Total'] += 1
+    # Update the Priority counts
+    if myPri_star is True:
+        tc_Depart[myBean][dept]['Pri STARRED'] += 1
+    elif myPri_1s is True:
+        tc_Depart[myBean][dept]['Pri 1S'] += 1
+    elif myPri_1 is True:
+        tc_Depart[myBean][dept]['Pri 1'] += 1
+    elif myPri_2s is True:
+        tc_Depart[myBean][dept]['Pri 2S'] += 1
+    elif myPri_2 is True:
+        tc_Depart[myBean][dept]['Pri 2'] += 1
+    elif myPri_3s is True:
+        tc_Depart[myBean][dept]['Pri 3S'] += 1
+    elif myPri_other is True:
+        tc_Depart[myBean][dept]['Pri OTHER'] += 1
+    else:
+        print('Row read error with Department by Priority. '
+                    'Row: ' + str(row) + ' TC Number: ' + dsp)
+        # tc_Depart[myBean][dept]['Total'] -= 1
         pass
 
 
@@ -301,7 +332,7 @@ else:
     # Presumed no, pass
     runByEvents = False
     pass
-print(curReportEvents)
+print('Events list of values: ' + curReportEvents)
 
 # Build INSURV List
 runTID = input('\nRun reports by Trial ID?\n'
@@ -317,7 +348,7 @@ else:
     # Presumed no, pass
     runByTrial_ID = False
     pass
-print(curReportTrial_ID)
+print('Trial ID list of values: ' + curReportTrial_ID)
 trial_ID = curReportTrial_ID
 
 # Run by INSURV Department
@@ -337,7 +368,7 @@ runBT = runBT.upper()
 if runBT == 'Y':
     curFromBT_Date = input('What is the date of the BT Trial?\n'
         'Example: yyyy/mm/dd: ')
-    print(curFromBT_Date)
+    print('BT Event date: ' + curFromBT_Date)
     runFromBT_Date = True
 else:
     # Presumed no
@@ -354,7 +385,7 @@ if runAT == 'Y':
     curFromAT_Date = input('What is the date of the AT Trial?\n'
         'Example: yyyy/mm/dd: ')
     runFromAT_Date = True
-    print(curFromAT_Date)
+    print('AT Event date: ' + curFromAT_Date)
 else:
     # Presumed no
     curFromAT_Date = None
@@ -373,7 +404,7 @@ try:
 except:
     mySheetName = input('\nWhat is the name of the sheet? ')
     sheet = wb.get_sheet_by_name(mySheetName)
-    print(sheet)
+    print('File name: ' + sheet)
 
 # Initialize the empty dictionary's
 tc_Status = {}  # By bean type, status and priority count
@@ -428,13 +459,13 @@ for row in range(2, sheet.max_row + 1):
 
     elif ((sheet['A' + str(row)].value == 'Trial Card No') or
           (sheet['A' + str(row)].value == 'Trial Card #')):
-        print('Header row found, pass.')
+        # print('Header row found, pass.')
         pass
     elif sheet['A' + str(row)].value == 'FOR OFFICIAL USE ONLY':
-        print('Exported fouo found, pass')
+        # print('Exported fouo found, pass')
         pass
     elif sheet['A' + str(row)].value == '':
-        print('Empty cell found, pass')
+        # print('Empty cell found, pass')
         pass
     else:
         # Un-captured value in field
