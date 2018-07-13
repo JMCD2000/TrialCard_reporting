@@ -236,6 +236,7 @@ def rowCount(row, bean, dt_BT=None, dt_AT=None):
 # Get the current Hull Number
 myHullNum = input('What is the Hull Number?\n'
                   'Example: 17: ')
+print('Hull number is: ' + myHullNum)
 
 # Build Events List
 runEvents = input('\nRun reports by Event?\n'
@@ -250,6 +251,7 @@ if runEvents == 'Y':
 else:
     # Presumed no, pass
     pass
+print(curReportEvents)
 
 # Build INSURV List
 runTID = input('\nRun reports by Trial ID?\n'
@@ -302,6 +304,8 @@ while fileNotFound is True:
         print('File not found, please re-enter the file name.\n'
               'File must be in the Python root directory.\n')
 
+print(curTSM_xlsx)
+
 # Open handles and objects
 # Excel file must be in same directory or bat location
 wb = openpyxl.load_workbook(curTSM_xlsx)
@@ -336,23 +340,24 @@ for row in range(2, sheet.max_row + 1):
             
             # Check if Event is in current report range
             if sheet['M' + str(row)].value is not None:
-                for e in curReportEvents:
-                    if  e in sheet['M' + str(row)].value:
-                        # Process row
-                        rowCount(row, events, userBT, userAT)
-                        # Stop e iteration of curReportEvents, don't multi count single row
-                        break
-                    else:
-                        # Current e iteration in the current report events list is not in the current row 
-                        continue
+                # Single value in a list of values
+                if sheet['M' + str(row)].value in curReportEvents:
+                    # Process row
+                    rowCount(row, events, userBT, userAT)
+                    # Stop e iteration of curReportEvents, don't multi count single row
+                    pass
+                else:
+                    # Current e iteration in the current report events list is not in the current row
+                    pass
             else:
                 # cell is empty
                 pass
             
             # Check if Event ID is in current report range
             if sheet['L' + str(row)].value is not None:
+                # Multi values in a list of values
                 for t in curReportTrial_ID:
-                    if  t in sheet['L' + str(row)].value:
+                    if t in sheet['L' + str(row)].value:
                         # Process row
                         rowCount(row, trial_ID, userBT, userAT)
                         # Stop t iteration of curReportTrial_ID, don't multi count single row
